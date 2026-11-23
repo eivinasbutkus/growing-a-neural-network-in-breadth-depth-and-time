@@ -117,15 +117,20 @@ Precomputed evaluation results and trained checkpoints for all experiments in th
 
 | Archive | Size | Contents |
 |---|---|---|
-| `results.tar` | ~2.6 GB | Evaluation results (`results.npz`), occlusion results, attribution results, and pruning results/masks for every model. **Sufficient to regenerate all figures.** |
-| `checkpoints.tar` | ~6.9 GB | Final-epoch checkpoint (`checkpoint_149.pt`) and training config for every model. Only needed to re-run evaluation or to use the trained models. |
+| `results.tar` | 2.75 GB | Evaluation results (`results.npz`), occlusion results, attribution results, and pruning results/masks for every model. **Sufficient to regenerate all figures.** |
+| `checkpoints.tar` | 7.38 GB | Final-epoch checkpoint (`checkpoint_149.pt`) and training config for every model. Only needed to re-run evaluation or to use the trained models. |
 
-Both archives cover the three experiments `breadth_depth_time_v7`, `time_selection`, and `datasets_v4`. Unpack them in the repository root:
+Both archives cover the three experiments `breadth_depth_time_v7`, `time_selection`, and `datasets_v4`. Download and extract them in the repository root:
 
 ```bash
-tar -xf results.tar       # -> results/experiment_<name>/model-<overrides>/instance<N>/
-tar -xf checkpoints.tar   # -> checkpoints/experiment_<name>/<dataset>-<overrides>/instance<N>/
+# results (enough to regenerate all figures)
+wget https://zenodo.org/records/24472458/files/results.tar && tar -xf results.tar && rm results.tar
+
+# checkpoints (optional)
+wget https://zenodo.org/records/24472458/files/checkpoints.tar && tar -xf checkpoints.tar && rm checkpoints.tar
 ```
+
+This produces `results/experiment_<name>/model-<overrides>/instance<N>/` and `checkpoints/experiment_<name>/<dataset>-<overrides>/instance<N>/`.
 
 With `results/` in place, the notebooks run without any checkpoints: evaluation is skipped for every model whose result files already exist.
 
