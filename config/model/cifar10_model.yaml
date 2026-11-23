@@ -1,0 +1,17 @@
+name: cifar10_model
+
+n_layers: 6 # max number of layers
+n_channels: 48 # max number of channels per layer
+noise_std: 0.1 # standard deviation of the noise added to model pre-activations
+spatial_size: 32 # spatial size of the input images (CIFAR-10 is 32x32)
+
+n_timesteps: 5 # number of time steps to run the model for
+# h_leak: 0.3 # leak factor for the hidden state update (~how much of the membrane potential is leaked each timestep)
+
+init:
+  scheme: xavier # [kaiming, xavier] NB: kaiming seems unstable
+  scale: 0.25
+
+time_selection:
+  scheme: adaptive # [fixed, adaptive]
+  mlp_hidden_dim: 64

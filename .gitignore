@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model checkpoints and evaluation results (downloaded separately, see README)
+checkpoints/*
+!checkpoints/.gitkeep
+results/*
+!results/.gitkeep
+
+# Datasets auto-downloaded from HuggingFace Hub
+data/datasets/
+
+# zipped duplicate of data/cifar10h/cifar10h-raw.csv
+data/cifar10h/cifar10h-raw.zip
+
+# SLURM logs and generated job files
+batch_out/*
+!batch_out/.gitkeep
+scripts/cluster/*/
+
+# Hydra / misc outputs
+outputs/
+multirun/
+profile_trace.json
+
+# Local-only working directories
+checkpoints_local/
+data_local/
+results_local/
+
+# OS
+.DS_Store

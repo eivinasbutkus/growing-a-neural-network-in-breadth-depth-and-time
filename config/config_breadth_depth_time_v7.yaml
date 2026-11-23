@@ -1,0 +1,28 @@
+
+defaults:
+  - config
+  - _self_ # below values override config/config.yaml defaults
+
+
+experiment:
+  name: breadth_depth_time_v7
+
+  variables:
+    - key: costs.space.lam_breadth
+      vals: [0.0, 1.0, 10.0, 100.0, 1000.0, 10000.0]
+    - key: costs.space.lam_depth
+      vals: [0.0, 1.0, 10.0, 100.0, 1000.0, 10000.0]
+    - key: costs.time.lam
+      # vals: [0.0, 0.1, 1.0]
+      vals: [0.0, 0.1, 0.2, 0.3, 0.5, 1.0]
+
+  n_instances: 3 # for now
+
+cluster:
+  script: train # options: train, evaluate
+  hours: 8
+  minutes: 0
+
+train:
+  num_workers: 4
+

@@ -1,0 +1,41 @@
+
+train:
+  seed: 0
+
+  checkpoint_epoch_interval: 5
+
+  instance: 0
+  n_epochs: 150
+  batch_size: 128
+  num_workers: 6
+
+  mixed_precision: True
+  compile_model: True
+
+  val_split: 0.1  # 10% for validation
+  val_seed: 42    # Fixed seed for reproducible splits
+
+  adamw:
+    lr: 0.001
+    betas: [0.9, 0.999]
+    eps: 1e-08
+    weight_decay: 0.1  # regularization (beyond space cost) on all parameters to reduce overfitting
+
+  lr_scheduler:
+    warmup_epochs: 5
+    hold_epochs: 25    # costs fully on by ~epoch 35; start cosine decay once they're active
+    name: cosine
+    args:
+      T_max: 120       # 150 - 5 warmup - 25 hold = 120 epochs of cosine decay
+      eta_min: 1e-6    # lower floor so the final ~20 epochs actually settle
+
+  noise_anneal:
+    enabled: True
+    warmup_epochs: 5 # how many epochs to wait before adding noise
+    anneal_epochs: 10 # how many epochs to anneal over
+
+  include_in_postfix: [
+    'loss', 'loss_errors', 'loss_space', 'loss_time', 'accuracy',
+    'time_weight_entropy', 'time_entropy', 'tw_mean_t0', 'tw_mean_t1', 'tw_mean_t2', 'tw_mean_t3',
+  ]
+

@@ -1,0 +1,30 @@
+
+defaults:
+  - config
+  - _self_ # below values override config/config.yaml defaults
+
+
+# no space costs for this experiment
+costs:
+  space:
+    lam_breadth: 0.0
+    lam_depth: 0.0
+
+model:
+  time_selection:
+    scheme: fixed # [fixed, adaptive]
+
+experiment:
+  name: time_selection
+
+  variables:
+    - key: model.time_selection.scheme
+      vals: [fixed, adaptive]
+    - key: costs.time.lam
+      vals: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+  n_instances: 10 # for now
+  num_workers: 6
+
+
+

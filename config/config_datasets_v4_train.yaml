@@ -1,0 +1,28 @@
+
+defaults:
+  - config
+  - _self_ # below values override config/config.yaml defaults
+
+
+experiment:
+  name: datasets_v4
+
+  variables:
+    - key: dataset
+      vals: [mnist, cifar10, tiny-imagenet]
+    - key: costs.space.lam_breadth
+      vals: [1.0, 10.0, 100.0]
+    - key: costs.space.lam_depth
+      vals: [1.0, 10.0, 100.0]
+    - key: costs.time.lam
+      vals: [0.1, 0.2, 0.5]
+
+  n_instances: 5
+  num_workers: 6
+
+
+cluster:
+  hours: 10
+  minutes: 0
+
+

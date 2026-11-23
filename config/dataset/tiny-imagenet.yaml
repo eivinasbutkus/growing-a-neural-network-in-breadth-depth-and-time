@@ -1,0 +1,5 @@
+name: tiny-imagenet
+n_input_channels: 3
+n_classes: 200
+occlusion_proportion: 0.0 # size of the occlusion square as proportion of image size
+path: null # use default path if null (DATASETS_DIR)

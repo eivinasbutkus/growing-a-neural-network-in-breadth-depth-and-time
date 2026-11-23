@@ -1,0 +1,46 @@
+
+costs:
+  errors:
+    enabled: true
+    cost: cross_entropy_error_cost
+    lam: 1.0
+    readout_weight_decay: 1e-4 # regularizes the parameters for the read outs
+
+  space:
+    enabled: true
+    cost: space_cost
+    lam_depth: 1.0 # layers
+    lam_breadth: 1.0 # channels
+    norm_power: 1 # norm power: 1=L1, 2=L2
+    position_power: 4 # exponent on rank weights (k/n)^position_power; higher = steeper cliff between active/inactive channels
+
+    anneal:
+      enabled: True
+      warmup_epochs: 15
+      anneal_epochs: 10
+
+  time:
+    cost: time_cost
+    enabled: true
+    lam: 1.0
+    position_power: 1  # exponent on rank weights (t/(n-1))^position_power; higher = steeper penalty on later timesteps
+    logit_scale: 4.0 # increasing the dynamic range of the time selection logits
+
+    anneal:
+      enabled: True
+      warmup_epochs: 20
+      anneal_epochs: 10
+
+
+  data:
+    enabled: false
+    lam: 0.0
+    cost: None
+
+  energy:
+    enabled: false
+    lam: 0.0
+    cost: None
+
+
+

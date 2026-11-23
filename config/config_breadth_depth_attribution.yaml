@@ -1,0 +1,15 @@
+
+
+defaults:
+  - config_breadth_depth
+  - _self_ # below values override config/config.yaml defaults
+
+# config for generating attribution heatmaps and stats for selected cifar10 test images
+cluster:
+  script: evaluate_attribution # options: train, evaluate
+  hours: 0
+  minutes: 20
+
+train:
+  num_workers: 4
+

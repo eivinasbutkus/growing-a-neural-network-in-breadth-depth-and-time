@@ -1,0 +1,84 @@
+
+defaults:
+  - _self_
+  - costs
+  - train
+  - model: cifar10_model
+  - dataset: cifar10
+
+experiment:
+  name: default
+  checkpoint_elements: []
+
+cluster:
+  script: train # options: train, evaluate
+  hours: 3
+  minutes: 0
+  exclude_nodes: []
+  non_compile_nodes: []
+
+hydra:
+  job_logging:
+    loggers:
+      httpx:
+        level: WARNING
+
+
+analysis:
+  # preserve 98% of above chance performance
+  # pruning_accuracy_threshold: 0.95
+  pruning_accuracy_threshold: 0.98
+  # pruning_accuracy_threshold: 0.99
+  pruning_binary_search_iterations: 30
+
+  # if accuracy drops by more than, say, 25% of the total pruning accuracy budget (baseline - threshold_acc), keep this layer / channel
+  # this prevents important channels being dropped when there is still a large accuracy budget
+  pruning_accuracy_delta: 0.25
+
+  # larger set of images to get more stable accuracy estimates
+  n_pruning_imgs: 10000 
+
+  # breadth vs. depth section
+  # attribution:
+  #   cifar10_indices: [129, 4673, 3931] # cifar10 indices for attribution visualizations
+
+  attribution:
+    # cam_layer_index: -1  # if None, use last conv layer
+    cam_timestep_index: -1  # last timestep because breadth vs. depth models (lam_time = 0.0) use all timesteps
+    # will do all layers all time steps
+    perturb_kernel_size: 5
+    perturb_stride: 1
+    perturb_noise_std: 0.05
+    # cifar_10_test_img_inds: [235, 82, 75, 184, 159, 212, 41, 208, 73, 89]  # 1 index per category from test_loader
+    cifar_10_test_selected_img_inds: [129, 4673, 3931] # cifar10 indices for attribution visualizations
+
+    cifar_10_test_stats_n_imgs: 100 # number of random images from cifar10 test set to use for attribution stats (e.g. average drop, increase in confidence, etc.)
+    cifar_10_test_stats_seed: 42 # seed for randomly selecting images from cifar10 test set for attribution stats
+
+  # time section
+  occlusion_proportions: [0.0, 0.05, 0.1, 0.15, 0.2]
+  occlusion_lam_time: 0.2 # intermediate value, most adaptive
+
+  # breadth vs. depth vs. time section
+  pareto_accuracy_threshold: 0.7 # models have to achieve at least this accuracy to be included in the breadth vs. depth vs. time pareto analysis
+
+
+
+plotting:
+  # breadth: "#EE6677"  # pink/red
+  # depth: "#FF8C00"  # orange
+  breadth: "#d93045"  # pink/red
+  depth: "#cf7602"  # orange
+
+  time: "#1D4DF2"    # blue
+
+  fixed_time: "#1e1f21"
+  human_time: "#2B2B2B" # dark gray
+
+  font:
+    family: "Helvetica"
+    # family: "Times New Roman, serif"
+    size: 18
+
+  width:
+    full: 1056
