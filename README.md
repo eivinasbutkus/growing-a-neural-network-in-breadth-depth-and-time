@@ -79,14 +79,15 @@ data/
 
 ## Installation
 
-The project uses [Poetry](https://python-poetry.org/) and requires **Python ≥ 3.12**.
+The project uses [Poetry](https://python-poetry.org/) and requires **Python 3.12 or 3.13** (PyTorch 2.7 has no wheels for newer versions).
 
 ```bash
 # Clone the repository
 git clone https://github.com/eivinasbutkus/growing-a-neural-network-in-breadth-depth-and-time.git
 cd growing-a-neural-network-in-breadth-depth-and-time
 
-# Install dependencies with Poetry
+# Install dependencies with Poetry (point it at Python 3.12 or 3.13 if that is not your default)
+poetry env use python3.12
 poetry install
 
 # Or install in an existing environment
