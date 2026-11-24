@@ -13,17 +13,22 @@ def get_results_dir(cfg):
     results_dir = RESULTS_DIR / f"experiment_{cfg.experiment.name}" / f"model{checkpoint_elements_to_str(cfg)}" / f"instance{cfg.train.instance}"
     return results_dir
 
-def maybe_compile(cfg, model):
-    """torch.compile the model if enabled and the GPU supports Triton (CUDA capability >= 7.0).
+def maybe_compile(cfg, model, **compile_kwargs):
+    """torch.compile the model if enabled, running on CUDA, and the GPU supports Triton (capability >= 7.0).
 
-    Older GPUs (e.g. GTX 1080 Ti on ax03-05) can't run Triton kernels, so the model runs eagerly there.
+    Otherwise the model runs eagerly: torch.compile is not reliable on Apple GPUs (MPS) or CPU, and older
+    GPUs (e.g. GTX 1080 Ti) can't run Triton kernels.
     """
     if not cfg.train.get("compile_model", True):
         return model
-    if torch.cuda.is_available() and torch.cuda.get_device_capability() < (7, 0):
+    if not torch.cuda.is_available():
+        print("torch.compile is only used on CUDA GPUs; running uncompiled")
+        return model
+    if torch.cuda.get_device_capability() < (7, 0):
         print(f"{torch.cuda.get_device_name()} does not support torch.compile (Triton); running uncompiled")
         return model
-    return torch.compile(model)
+    print("Compiling model with torch.compile...")
+    return torch.compile(model, **compile_kwargs)
 
 
 # v2: every binary-search step is checked on the full test set (v1 accepted steps on a 1024-image

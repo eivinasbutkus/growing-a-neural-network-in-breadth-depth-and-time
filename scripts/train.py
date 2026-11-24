@@ -36,12 +36,8 @@ def train(cfg):
     for g in optimizer.param_groups:
         g['weight_decay'] = cfg.train.adamw.weight_decay
 
-    # optionally compile the model for faster training
-    if cfg.train.get('compile_model', True):
-        print("Compiling model with torch.compile...")
-        model = torch.compile(base_model, mode='reduce-overhead')  # or 'default', 'max-autotune'
-    else:
-        model = base_model
+    # optionally compile the model for faster training (CUDA only)
+    model = nn_bowl.utils.maybe_compile(cfg, base_model, mode='reduce-overhead')  # or 'default', 'max-autotune'
 
     writer = SummaryWriter(log_dir=checkpoint_dir / "tensorboard")
 
