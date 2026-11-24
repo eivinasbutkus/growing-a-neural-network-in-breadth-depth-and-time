@@ -147,15 +147,21 @@ All scripts use [Hydra](https://hydra.cc) for config management. Override any co
 python scripts/train.py
 ```
 
-**Example: train with explicit breadth, depth, and time cost weights:**
+Checkpoints are saved to `checkpoints/experiment_default/cifar10/instance0/`.
+
+**Train a model from one of the paper's experiments with specific cost weights:**
+
+Pass the experiment config with `--config-name` (this is how the cluster jobs are run). Its swept keys (`experiment.variables`) are included in the checkpoint directory name, so runs with different weights do not overwrite each other. Set `experiment.name` to keep your runs separate from the downloaded checkpoints.
 
 ```bash
-python scripts/train.py \
+python scripts/train.py --config-name=config_breadth_depth_time_v7 \
   experiment.name=my_run \
   costs.space.lam_breadth=10.0 \
   costs.space.lam_depth=10.0 \
   costs.time.lam=0.2
 ```
+
+Checkpoints are saved to `checkpoints/experiment_my_run/cifar10-costs.space.lam_breadth=10.0-costs.space.lam_depth=10.0-costs.time.lam=0.2/instance0/`.
 
 **Common overrides:**
 
@@ -168,21 +174,19 @@ python scripts/train.py \
 | `model.time_selection.scheme` | `adaptive` | Time selection: `adaptive` or `fixed` |
 | `train.instance` | `0` | Instance index (for multiple seeds) |
 | `train.n_epochs` | `150` | Number of training epochs |
-| `train.compile_model` | `True` | Use `torch.compile` (disable on older GPUs) |
+| `train.compile_model` | `True` | Use `torch.compile` (disable on older GPUs or if compilation fails) |
 
-Checkpoints are saved to `checkpoints/experiment_<name>/<dataset>-<overrides>/instance<N>/`.
-
-**Evaluate a trained model:**
+**Evaluate a trained model** (same arguments as for training):
 
 ```bash
-python scripts/evaluate.py \
+python scripts/evaluate.py --config-name=config_breadth_depth_time_v7 \
   experiment.name=my_run \
   costs.space.lam_breadth=10.0 \
   costs.space.lam_depth=10.0 \
   costs.time.lam=0.2
 ```
 
-Results are saved as `results/experiment_<name>/model-<overrides>/instance<N>/results.npz`.
+Results are saved to `results/experiment_my_run/model-costs.space.lam_breadth=10.0-costs.space.lam_depth=10.0-costs.time.lam=0.2/instance0/results.npz`.
 
 ---
 

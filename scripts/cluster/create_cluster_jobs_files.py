@@ -4,7 +4,7 @@ import hydra
 from hydra.core.hydra_config import HydraConfig
 import nn_bowl
 
-@hydra.main(version_base=None, config_name='config_breadth_depth_time', config_path=nn_bowl.paths.CONFIG_PATH)
+@hydra.main(version_base=None, config_name='config_breadth_depth_time_v7', config_path=nn_bowl.paths.CONFIG_PATH)
 def main(cfg):
     experiment_name = cfg.experiment.name
     dir = Path(__file__).parent / experiment_name

@@ -8,7 +8,8 @@ defaults:
 
 experiment:
   name: default
-  checkpoint_elements: []
+  variables: [] # swept config keys (set by the experiment configs); included in checkpoint/result dir names
+  checkpoint_elements: [] # extra config keys to include in checkpoint/result dir names
 
 cluster:
   script: train # options: train, evaluate
