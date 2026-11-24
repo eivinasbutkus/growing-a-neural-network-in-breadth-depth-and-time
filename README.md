@@ -102,10 +102,16 @@ Key dependencies (see `pyproject.toml` for pinned versions):
 | `hydra-core` | Config management |
 | `datasets` | HuggingFace dataset loading |
 | `tensorboard` | Training metrics |
-| `matplotlib`, `seaborn`, `plotly` | Figures |
+| `matplotlib`, `seaborn`, `plotly`, `kaleido` | Figures (`kaleido` exports plotly figures to PDF) |
 | `scikit-learn`, `statsmodels` | Analysis in notebooks |
 
 Datasets are downloaded automatically from HuggingFace Hub on first use and cached under `data/datasets/`.
+
+Exporting plotly figures from the notebooks requires a Chrome/Chromium browser, which `kaleido` uses for rendering. If none is installed, or figure export fails with a browser error, install a compatible copy with:
+
+```bash
+poetry run plotly_get_chrome -y
+```
 
 ---
 
