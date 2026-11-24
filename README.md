@@ -65,7 +65,6 @@ notebooks/
     02_time.ipynb                # Time-selection analysis
     03_breadth_depth_time.ipynb  # Joint breadth × depth × time Pareto analysis
     04_datasets_experiment.ipynb # Cross-dataset complexity comparison
-    *.pdf, *.html                # Rendered exports of the executed notebooks
 
 checkpoints/           # Model checkpoints (download separately, see below)
 results/               # Evaluation results (download separately, see below)
