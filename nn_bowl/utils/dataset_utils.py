@@ -29,19 +29,16 @@ HUGGINGFACE_NAMES = {
     "tiny-imagenet": "slegroux/tiny-imagenet-200-clean"
 }
 
-def _get_occlusion_transform(cfg):
-    if cfg.dataset.occlusion_proportion < 0.0 or cfg.dataset.occlusion_proportion > 1.0:
-        raise ValueError("occlusion_proportion must be between 0.0 and 1.0")
-    
-    if cfg.dataset.occlusion_proportion == 0.0:
-        return T.Lambda(lambda x: x)  # identity transform (no occlusion)
-    
-    proportion = cfg.dataset.occlusion_proportion
+class _RandomGraySquare:
+    """Occludes a random square covering `proportion` of the image (set to 0.0, i.e. the mean after normalization)."""
 
-    def _random_gray_square(x):
+    def __init__(self, proportion):
+        self.proportion = proportion
+
+    def __call__(self, x):
         # x is a tensor with shape (C, H, W)
         _, h, w = x.shape
-        side = int(round((proportion * h * w) ** 0.5))
+        side = int(round((self.proportion * h * w) ** 0.5))
         side = min(side, h, w)
         top = 0 if h == side else int(torch.randint(0, h - side + 1, (1,)).item())
         left = 0 if w == side else int(torch.randint(0, w - side + 1, (1,)).item())
@@ -50,14 +47,22 @@ def _get_occlusion_transform(cfg):
         x[:, top:top + side, left:left + side] = 0.0
         return x
 
-    return T.Lambda(_random_gray_square)
+
+def _get_occlusion_transform(cfg):
+    """Returns the occlusion transform, or None if no occlusion is applied."""
+    if cfg.dataset.occlusion_proportion < 0.0 or cfg.dataset.occlusion_proportion > 1.0:
+        raise ValueError("occlusion_proportion must be between 0.0 and 1.0")
+
+    if cfg.dataset.occlusion_proportion == 0.0:
+        return None
+
+    return _RandomGraySquare(cfg.dataset.occlusion_proportion)
 
 def _get_transform(cfg, augment=False):
     if cfg.dataset.name not in NORMALIZATION_PARAMS.keys():
         raise ValueError(f"Unsupported dataset: {cfg.dataset.name}")
 
     augmentation_transforms = AUGMENTATIONS.get(cfg.dataset.name, []) if augment else []
-    # occlusion_transform = _get_occlusion_transform(cfg) if occlude else T.Lambda(lambda x: x)
     occlusion_transform = _get_occlusion_transform(cfg)
     
     transforms = [
@@ -71,16 +76,28 @@ def _get_transform(cfg, augment=False):
         *augmentation_transforms,
         T.ToTensor(),
         T.Normalize(*NORMALIZATION_PARAMS[cfg.dataset.name]),  # Dataset-specific stats
-        occlusion_transform,
     ])
+    if occlusion_transform is not None:
+        transforms.append(occlusion_transform)
 
     return T.Compose(transforms)
 
+class _Formatter:
+    """Applies `transform` to a batch of HuggingFace examples. A class rather than a lambda so that
+    DataLoader workers can pickle it (required on macOS/Windows, which start workers with 'spawn')."""
+
+    def __init__(self, transform):
+        self.transform = transform
+
+    def __call__(self, examples):
+        return {
+            'img': [self.transform(image) for image in examples['img']],
+            'label': examples['label']
+        }
+
+
 def _make_formatter(transform):
-    return lambda examples: {
-        'img': [transform(image) for image in examples['img']],
-        'label': examples['label']
-    }
+    return _Formatter(transform)
 
 def get_dataloaders(cfg):
     cache_dir = DATASETS_DIR if cfg.dataset.path is None else cfg.dataset.path
